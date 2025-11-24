@@ -420,6 +420,12 @@ void CPU::execute() {
     }
     break;
   }
+
+  // STOP
+  case 0x10: {
+    std::println("STOP");
+    break;
+  }
   default:
     std::println(stderr,
                  "Error: Unknown opcode found (PC: 0x{:04X} OPCODE: 0x{:02X})",
