@@ -355,6 +355,15 @@ void CPU::execute() {
     std::println("LD A, 0x{:02X}", imm8);
     break;
   }
+
+  // todo: implement RLCA
+  // todo: implement RRCA
+  // todo: implement RLA
+  // todo: implement RRA
+  // todo: implement DAA
+  // todo: implement CPL
+  // todo: implement SCF
+  // todo: implement CCF
   default:
     std::println(stderr,
                  "Error: Unknown opcode found (PC: 0x{:04X} OPCODE: 0x{:02X})",
