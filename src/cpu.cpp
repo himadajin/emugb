@@ -23,6 +23,32 @@ void CPU::execute() {
   case 0x00:
     std::println("NOP");
     break;
+
+  // LD r16, imm16
+  case 0x01: {
+    const uint16_t imm16 = imm_word();
+    regFile.set_bc(imm16);
+    std::println("LD BC, 0x{:04X}", imm16);
+    break;
+  }
+  case 0x11: {
+    const uint16_t imm16 = imm_word();
+    regFile.set_de(imm16);
+    std::println("LD DE, 0x{:04X}", imm16);
+    break;
+  }
+  case 0x21: {
+    const uint16_t imm16 = imm_word();
+    regFile.set_hl(imm16);
+    std::println("LD HL, 0x{:04X}", imm16);
+    break;
+  }
+  case 0x31: {
+    const uint16_t imm16 = imm_word();
+    regFile.sp = imm16;
+    std::println("LD SP, 0x{:04X}", imm16);
+    break;
+  }
   default:
     std::println(stderr,
                  "Error: Unknown opcode found (PC: 0x{:04X} OPCODE: 0x{:02X})",
