@@ -77,6 +77,34 @@ void CPU::execute() {
     std::println("LD (HL-), A");
     break;
   }
+
+  // LD A, (r16)
+  case 0x0A: {
+    const uint16_t addr = regFile.get_bc();
+    regFile.a = memory.get_byte(addr);
+    std::println("LD A, (BC)");
+    break;
+  }
+  case 0x1A: {
+    const uint16_t addr = regFile.get_de();
+    regFile.a = memory.get_byte(addr);
+    std::println("LD A, (DE)");
+    break;
+  }
+  case 0x2A: {
+    const uint16_t addr = regFile.get_hl();
+    regFile.a = memory.get_byte(addr);
+    regFile.set_hl(addr + 1);
+    std::println("LD A, (HL+)");
+    break;
+  }
+  case 0x3A: {
+    const uint16_t addr = regFile.get_hl();
+    regFile.a = memory.get_byte(addr);
+    regFile.set_hl(addr - 1);
+    std::println("LD A, (HL-)");
+    break;
+  }
   default:
     std::println(stderr,
                  "Error: Unknown opcode found (PC: 0x{:04X} OPCODE: 0x{:02X})",
