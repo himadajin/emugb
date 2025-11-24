@@ -25,6 +25,15 @@ uint8_t CPU::alu_inc(uint8_t imm8) {
   return result;
 }
 
+uint8_t CPU::alu_dec(uint8_t imm8) {
+  const uint8_t result = imm8 - 1;
+  regFile.set_flag(Flag::Z, result == 0);
+  regFile.set_flag(Flag::H, (imm8 & 0x0F) == 0);
+  regFile.set_flag(Flag::N, true);
+  // Flag::C is not affected.
+  return result;
+}
+
 void CPU::alu_add_hl(uint16_t imm16) {
   const uint32_t result =
       static_cast<uint32_t>(regFile.get_hl()) + static_cast<uint32_t>(imm16);
@@ -248,6 +257,51 @@ void CPU::execute() {
   case 0x3C: {
     regFile.a = alu_inc(regFile.a);
     std::println("INC A");
+    break;
+  }
+
+  // DEC r8
+  case 0x05: {
+    regFile.b = alu_dec(regFile.b);
+    std::println("DEC B");
+    break;
+  }
+  case 0x15: {
+    regFile.d = alu_dec(regFile.d);
+    std::println("DEC D");
+    break;
+  }
+  case 0x25: {
+    regFile.h = alu_dec(regFile.h);
+    std::println("DEC H");
+    break;
+  }
+  case 0x35: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    const uint8_t result = alu_dec(value);
+    memory.set_byte(addr, result);
+    std::println("DEC (HL)");
+    break;
+  }
+  case 0x0D: {
+    regFile.c = alu_dec(regFile.c);
+    std::println("DEC C");
+    break;
+  }
+  case 0x1D: {
+    regFile.e = alu_dec(regFile.e);
+    std::println("DEC E");
+    break;
+  }
+  case 0x2D: {
+    regFile.l = alu_dec(regFile.l);
+    std::println("DEC L");
+    break;
+  }
+  case 0x3D: {
+    regFile.a = alu_dec(regFile.a);
+    std::println("DEC A");
     break;
   }
   default:
