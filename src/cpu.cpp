@@ -304,6 +304,57 @@ void CPU::execute() {
     std::println("DEC A");
     break;
   }
+
+  // LD r8, imm8
+  case 0x06: {
+    const uint8_t imm8 = imm_byte();
+    regFile.b = imm8;
+    std::println("LD B, 0x{:02X}", imm8);
+    break;
+  }
+  case 0x16: {
+    const uint8_t imm8 = imm_byte();
+    regFile.d = imm8;
+    std::println("LD D, 0x{:02X}", imm8);
+    break;
+  }
+  case 0x26: {
+    const uint8_t imm8 = imm_byte();
+    regFile.h = imm8;
+    std::println("LD H, 0x{:02X}", imm8);
+    break;
+  }
+  case 0x36: {
+    const uint8_t imm8 = imm_byte();
+    const uint16_t addr = regFile.get_hl();
+    memory.set_byte(addr, imm8);
+    std::println("LD (HL), 0x{:02X}", imm8);
+    break;
+  }
+  case 0x0E: {
+    const uint8_t imm8 = imm_byte();
+    regFile.c = imm8;
+    std::println("LD C, 0x{:02X}", imm8);
+    break;
+  }
+  case 0x1E: {
+    const uint8_t imm8 = imm_byte();
+    regFile.e = imm8;
+    std::println("LD E, 0x{:02X}", imm8);
+    break;
+  }
+  case 0x2E: {
+    const uint8_t imm8 = imm_byte();
+    regFile.l = imm8;
+    std::println("LD L, 0x{:02X}", imm8);
+    break;
+  }
+  case 0x3E: {
+    const uint8_t imm8 = imm_byte();
+    regFile.a = imm8;
+    std::println("LD A, 0x{:02X}", imm8);
+    break;
+  }
   default:
     std::println(stderr,
                  "Error: Unknown opcode found (PC: 0x{:04X} OPCODE: 0x{:02X})",
