@@ -113,6 +113,31 @@ void CPU::execute() {
     std::println("LD (0x{:04X}), SP", addr);
     break;
   }
+
+  // INC r16
+  case 0x03: {
+    const uint16_t value = regFile.get_bc();
+    regFile.set_bc(value + 1);
+    std::println("INC BC");
+    break;
+  }
+  case 0x13: {
+    const uint16_t value = regFile.get_de();
+    regFile.set_de(value + 1);
+    std::println("INC DE");
+    break;
+  }
+  case 0x23: {
+    const uint16_t value = regFile.get_hl();
+    regFile.set_hl(value + 1);
+    std::println("INC HL");
+    break;
+  }
+  case 0x33: {
+    regFile.sp += 1;
+    std::println("INC SP");
+    break;
+  }
   default:
     std::println(stderr,
                  "Error: Unknown opcode found (PC: 0x{:04X} OPCODE: 0x{:02X})",
