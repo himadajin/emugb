@@ -105,6 +105,14 @@ void CPU::execute() {
     std::println("LD A, (HL-)");
     break;
   }
+
+  // LD (imm16), SP
+  case 0x08: {
+    const uint16_t addr = imm_word();
+    memory.set_word(addr, regFile.sp);
+    std::println("LD (0x{:04X}), SP", addr);
+    break;
+  }
   default:
     std::println(stderr,
                  "Error: Unknown opcode found (PC: 0x{:04X} OPCODE: 0x{:02X})",
