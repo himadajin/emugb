@@ -138,6 +138,31 @@ void CPU::execute() {
     std::println("INC SP");
     break;
   }
+
+  // DEC r16
+  case 0x0B: {
+    const uint16_t value = regFile.get_bc();
+    regFile.set_bc(value - 1);
+    std::println("DEC BC");
+    break;
+  }
+  case 0x1B: {
+    const uint16_t value = regFile.get_de();
+    regFile.set_de(value - 1);
+    std::println("DEC DE");
+    break;
+  }
+  case 0x2B: {
+    const uint16_t value = regFile.get_hl();
+    regFile.set_hl(value - 1);
+    std::println("DEC HL");
+    break;
+  }
+  case 0x3B: {
+    regFile.sp -= 1;
+    std::println("DEC SP");
+    break;
+  }
   default:
     std::println(stderr,
                  "Error: Unknown opcode found (PC: 0x{:04X} OPCODE: 0x{:02X})",
