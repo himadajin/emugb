@@ -9,6 +9,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_executable(emugb
     src/cartridge.cpp
+    src/cpu.cpp
     src/main.cpp
     src/memory.cpp
     src/mmu.cpp
