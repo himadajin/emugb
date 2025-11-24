@@ -16,6 +16,17 @@ uint16_t CPU::imm_word() {
   return value;
 }
 
+void CPU::alu_add_hl(uint16_t imm16) {
+  const uint32_t result =
+      static_cast<uint32_t>(regFile.get_hl()) + static_cast<uint32_t>(imm16);
+  // Flag::Z is not affected.
+  regFile.set_flag(Flag::N, false);
+  regFile.set_flag(Flag::H,
+                   (regFile.get_hl() & 0x0FFF) + (imm16 & 0x0FFF) > 0x0FFF);
+  regFile.set_flag(Flag::C, result > 0xFFFF);
+  regFile.set_hl(static_cast<uint16_t>(result & 0xFFFF));
+}
+
 void CPU::execute() {
   const uint8_t byte0 = imm_byte();
   switch (byte0) {
@@ -161,6 +172,28 @@ void CPU::execute() {
   case 0x3B: {
     regFile.sp -= 1;
     std::println("DEC SP");
+    break;
+  }
+
+  // ADD HL, r16
+  case 0x09: {
+    alu_add_hl(regFile.get_bc());
+    std::println("ADD HL, BC");
+    break;
+  }
+  case 0x19: {
+    alu_add_hl(regFile.get_de());
+    std::println("ADD HL, DE");
+    break;
+  }
+  case 0x29: {
+    alu_add_hl(regFile.get_hl());
+    std::println("ADD HL, HL");
+    break;
+  }
+  case 0x39: {
+    alu_add_hl(regFile.sp);
+    std::println("ADD HL, SP");
     break;
   }
   default:

@@ -14,6 +14,8 @@ public:
   uint8_t imm_byte();
   uint16_t imm_word();
 
+  void alu_add_hl(uint16_t imm16);
+
   void execute();
 };
 
