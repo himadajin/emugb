@@ -32,6 +32,7 @@ uint8_t MMU::get_byte(uint16_t addr) const {
     // Interrupt Enable Register (not implemented)
     return 0;
   }
+  std::unreachable();
 }
 
 void MMU::set_byte(uint16_t addr, uint8_t value) {
