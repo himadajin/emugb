@@ -426,6 +426,337 @@ void CPU::execute() {
     std::println("STOP");
     break;
   }
+
+  // LD r8, r8
+  case 0x40: {
+    std::println("LD B, B");
+    break;
+  }
+  case 0x50: {
+    regFile.d = regFile.b;
+    std::println("LD D, B");
+    break;
+  }
+  case 0x60: {
+    regFile.h = regFile.b;
+    std::println("LD H, B");
+    break;
+  }
+  case 0x70: {
+    const uint16_t addr = regFile.get_hl();
+    memory.set_byte(addr, regFile.b);
+    std::println("LD (HL), B");
+    break;
+  }
+  case 0x41: {
+    regFile.b = regFile.c;
+    std::println("LD B, C");
+    break;
+  }
+  case 0x51: {
+    regFile.d = regFile.c;
+    std::println("LD D, C");
+    break;
+  }
+  case 0x61: {
+    regFile.h = regFile.c;
+    std::println("LD H, C");
+    break;
+  }
+  case 0x71: {
+    const uint16_t addr = regFile.get_hl();
+    memory.set_byte(addr, regFile.c);
+    std::println("LD (HL), C");
+    break;
+  }
+  case 0x42: {
+    regFile.b = regFile.d;
+    std::println("LD B, D");
+    break;
+  }
+  case 0x52: {
+    std::println("LD D, D");
+    break;
+  }
+  case 0x62: {
+    regFile.h = regFile.d;
+    std::println("LD H, D");
+    break;
+  }
+  case 0x72: {
+    const uint16_t addr = regFile.get_hl();
+    memory.set_byte(addr, regFile.d);
+    std::println("LD (HL), D");
+    break;
+  }
+  case 0x43: {
+    regFile.b = regFile.e;
+    std::println("LD B, E");
+    break;
+  }
+  case 0x53: {
+    regFile.d = regFile.e;
+    std::println("LD D, E");
+    break;
+  }
+  case 0x63: {
+    regFile.h = regFile.e;
+    std::println("LD H, E");
+    break;
+  }
+  case 0x73: {
+    const uint16_t addr = regFile.get_hl();
+    memory.set_byte(addr, regFile.e);
+    std::println("LD (HL), E");
+    break;
+  }
+  case 0x44: {
+    regFile.b = regFile.h;
+    std::println("LD B, H");
+    break;
+  }
+  case 0x54: {
+    regFile.d = regFile.h;
+    std::println("LD D, H");
+    break;
+  }
+  case 0x64: {
+    std::println("LD H, H");
+    break;
+  }
+  case 0x74: {
+    const uint16_t addr = regFile.get_hl();
+    memory.set_byte(addr, regFile.h);
+    std::println("LD (HL), H");
+    break;
+  }
+  case 0x45: {
+    regFile.b = regFile.l;
+    std::println("LD B, L");
+    break;
+  }
+  case 0x55: {
+    regFile.d = regFile.l;
+    std::println("LD D, L");
+    break;
+  }
+  case 0x65: {
+    regFile.h = regFile.l;
+    std::println("LD H, L");
+    break;
+  }
+  case 0x75: {
+    const uint16_t addr = regFile.get_hl();
+    memory.set_byte(addr, regFile.l);
+    std::println("LD (HL), L");
+    break;
+  }
+  case 0x46: {
+    const uint16_t addr = regFile.get_hl();
+    regFile.b = memory.get_byte(addr);
+    std::println("LD B, (HL)");
+    break;
+  }
+  case 0x56: {
+    const uint16_t addr = regFile.get_hl();
+    regFile.d = memory.get_byte(addr);
+    std::println("LD D, (HL)");
+    break;
+  }
+  case 0x66: {
+    const uint16_t addr = regFile.get_hl();
+    regFile.h = memory.get_byte(addr);
+    std::println("LD H, (HL)");
+    break;
+  }
+  case 0x76: {
+    std::println("HALT");
+    break;
+  }
+  case 0x47: {
+    regFile.b = regFile.a;
+    std::println("LD B, A");
+    break;
+  }
+  case 0x57: {
+    regFile.d = regFile.a;
+    std::println("LD D, A");
+    break;
+  }
+  case 0x67: {
+    regFile.h = regFile.a;
+    std::println("LD H, A");
+    break;
+  }
+  case 0x77: {
+    const uint16_t addr = regFile.get_hl();
+    memory.set_byte(addr, regFile.a);
+    std::println("LD (HL), A");
+    break;
+  }
+  case 0x48: {
+    regFile.c = regFile.b;
+    std::println("LD C, B");
+    break;
+  }
+  case 0x58: {
+    regFile.e = regFile.b;
+    std::println("LD E, B");
+    break;
+  }
+  case 0x68: {
+    regFile.l = regFile.b;
+    std::println("LD L, B");
+    break;
+  }
+  case 0x78: {
+    regFile.a = regFile.b;
+    std::println("LD A, B");
+    break;
+  }
+  case 0x49: {
+    std::println("LD C, C");
+    break;
+  }
+  case 0x59: {
+    regFile.e = regFile.c;
+    std::println("LD E, C");
+    break;
+  }
+  case 0x69: {
+    regFile.l = regFile.c;
+    std::println("LD L, C");
+    break;
+  }
+  case 0x79: {
+    regFile.a = regFile.c;
+    std::println("LD A, C");
+    break;
+  }
+  case 0x4A: {
+    regFile.c = regFile.d;
+    std::println("LD C, D");
+    break;
+  }
+  case 0x5A: {
+    regFile.e = regFile.d;
+    std::println("LD E, D");
+    break;
+  }
+  case 0x6A: {
+    regFile.l = regFile.d;
+    std::println("LD L, D");
+    break;
+  }
+  case 0x7A: {
+    regFile.a = regFile.d;
+    std::println("LD A, D");
+    break;
+  }
+  case 0x4B: {
+    regFile.c = regFile.e;
+    std::println("LD C, E");
+    break;
+  }
+  case 0x5B: {
+    regFile.e = regFile.e;
+    std::println("LD E, E");
+    break;
+  }
+  case 0x6B: {
+    regFile.l = regFile.e;
+    std::println("LD L, E");
+    break;
+  }
+  case 0x7B: {
+    regFile.a = regFile.e;
+    std::println("LD A, E");
+    break;
+  }
+  case 0x4C: {
+    regFile.c = regFile.h;
+    std::println("LD C, H");
+    break;
+  }
+  case 0x5C: {
+    regFile.e = regFile.h;
+    std::println("LD E, H");
+    break;
+  }
+  case 0x6C: {
+    regFile.l = regFile.h;
+    std::println("LD L, H");
+    break;
+  }
+  case 0x7C: {
+    regFile.a = regFile.h;
+    std::println("LD A, H");
+    break;
+  }
+  case 0x4D: {
+    regFile.c = regFile.l;
+    std::println("LD C, L");
+    break;
+  }
+  case 0x5D: {
+    regFile.e = regFile.l;
+    std::println("LD E, L");
+    break;
+  }
+  case 0x6D: {
+    regFile.l = regFile.l;
+    std::println("LD L, L");
+    break;
+  }
+  case 0x7D: {
+    regFile.a = regFile.l;
+    std::println("LD A, L");
+    break;
+  }
+  case 0x4E: {
+    const uint16_t addr = regFile.get_hl();
+    regFile.c = memory.get_byte(addr);
+    std::println("LD C, (HL)");
+    break;
+  }
+  case 0x5E: {
+    const uint16_t addr = regFile.get_hl();
+    regFile.e = memory.get_byte(addr);
+    std::println("LD E, (HL)");
+    break;
+  }
+  case 0x6E: {
+    const uint16_t addr = regFile.get_hl();
+    regFile.l = memory.get_byte(addr);
+    std::println("LD L, (HL)");
+    break;
+  }
+  case 0x7E: {
+    const uint16_t addr = regFile.get_hl();
+    regFile.a = memory.get_byte(addr);
+    std::println("LD A, (HL)");
+    break;
+  }
+  case 0x4F: {
+    regFile.c = regFile.a;
+    std::println("LD C, A");
+    break;
+  }
+  case 0x5F: {
+    regFile.e = regFile.a;
+    std::println("LD E, A");
+    break;
+  }
+  case 0x6F: {
+    regFile.l = regFile.a;
+    std::println("LD L, A");
+    break;
+  }
+  case 0x7F: {
+    regFile.a = regFile.a;
+    std::println("LD A, A");
+    break;
+  }
   default:
     std::println(stderr,
                  "Error: Unknown opcode found (PC: 0x{:04X} OPCODE: 0x{:02X})",
