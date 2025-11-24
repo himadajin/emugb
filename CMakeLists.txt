@@ -11,4 +11,5 @@ add_executable(emugb
     src/cartridge.cpp
     src/main.cpp
     src/memory.cpp
+    src/mmu.cpp
 )
