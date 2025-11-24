@@ -16,6 +16,15 @@ uint16_t CPU::imm_word() {
   return value;
 }
 
+uint8_t CPU::alu_inc(uint8_t imm8) {
+  const uint8_t result = imm8 + 1;
+  regFile.set_flag(Flag::Z, result == 0);
+  regFile.set_flag(Flag::H, (imm8 & 0x0F) + 1 > 0x0F);
+  regFile.set_flag(Flag::N, false);
+  // Flag::C is not affected.
+  return result;
+}
+
 void CPU::alu_add_hl(uint16_t imm16) {
   const uint32_t result =
       static_cast<uint32_t>(regFile.get_hl()) + static_cast<uint32_t>(imm16);
@@ -194,6 +203,51 @@ void CPU::execute() {
   case 0x39: {
     alu_add_hl(regFile.sp);
     std::println("ADD HL, SP");
+    break;
+  }
+
+  // INC r8
+  case 0x04: {
+    regFile.b = alu_inc(regFile.b);
+    std::println("INC B");
+    break;
+  }
+  case 0x14: {
+    regFile.d = alu_inc(regFile.d);
+    std::println("INC D");
+    break;
+  }
+  case 0x24: {
+    regFile.h = alu_inc(regFile.h);
+    std::println("INC H");
+    break;
+  }
+  case 0x34: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    const uint8_t result = alu_inc(value);
+    memory.set_byte(addr, result);
+    std::println("INC (HL)");
+    break;
+  }
+  case 0x0C: {
+    regFile.c = alu_inc(regFile.c);
+    std::println("INC C");
+    break;
+  }
+  case 0x1C: {
+    regFile.e = alu_inc(regFile.e);
+    std::println("INC E");
+    break;
+  }
+  case 0x2C: {
+    regFile.l = alu_inc(regFile.l);
+    std::println("INC L");
+    break;
+  }
+  case 0x3C: {
+    regFile.a = alu_inc(regFile.a);
+    std::println("INC A");
     break;
   }
   default:

@@ -15,6 +15,7 @@ public:
   uint16_t imm_word();
 
   void alu_add_hl(uint16_t imm16);
+  uint8_t alu_inc(uint8_t imm8);
 
   void execute();
 };
