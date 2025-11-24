@@ -45,6 +45,12 @@ void CPU::alu_add_hl(uint16_t imm16) {
   regFile.set_hl(static_cast<uint16_t>(result & 0xFFFF));
 }
 
+// JR: Jump Relative
+void CPU::alu_jr(uint8_t imm8) {
+  const int32_t offset = static_cast<int8_t>(imm8);
+  regFile.pc = static_cast<uint16_t>(static_cast<int32_t>(regFile.pc) + offset);
+}
+
 void CPU::execute() {
   const uint8_t byte0 = imm_byte();
   switch (byte0) {
@@ -364,6 +370,56 @@ void CPU::execute() {
   // todo: implement CPL
   // todo: implement SCF
   // todo: implement CCF
+
+  // JR imm8
+  case 0x18: {
+    const uint8_t imm8 = imm_byte();
+    alu_jr(imm8);
+    std::println("JR 0x{:02X}", imm8);
+    break;
+  }
+
+  // JR cond, imm8
+  case 0x20: {
+    const uint8_t imm8 = imm_byte();
+    if (!regFile.get_flag(Flag::Z)) {
+      alu_jr(imm8);
+      std::println("JR NZ, 0x{:02X}", imm8);
+    } else {
+      std::println("JR NZ, 0x{:02X} (not taken)", imm8);
+    }
+    break;
+  }
+  case 0x30: {
+    const uint8_t imm8 = imm_byte();
+    if (!regFile.get_flag(Flag::C)) {
+      alu_jr(imm8);
+      std::println("JR NC, 0x{:02X}", imm8);
+    } else {
+      std::println("JR NC, 0x{:02X} (not taken)", imm8);
+    }
+    break;
+  }
+  case 0x28: {
+    const uint8_t imm8 = imm_byte();
+    if (regFile.get_flag(Flag::Z)) {
+      alu_jr(imm8);
+      std::println("JR Z, 0x{:02X}", imm8);
+    } else {
+      std::println("JR Z, 0x{:02X} (not taken)", imm8);
+    }
+    break;
+  }
+  case 0x38: {
+    const uint8_t imm8 = imm_byte();
+    if (regFile.get_flag(Flag::C)) {
+      alu_jr(imm8);
+      std::println("JR C, 0x{:02X}", imm8);
+    } else {
+      std::println("JR C, 0x{:02X} (not taken)", imm8);
+    }
+    break;
+  }
   default:
     std::println(stderr,
                  "Error: Unknown opcode found (PC: 0x{:04X} OPCODE: 0x{:02X})",
