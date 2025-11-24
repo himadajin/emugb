@@ -12,6 +12,7 @@ public:
   CPU(Memory &memory) : regFile(), memory(memory) {}
 
   uint8_t imm_byte();
+  uint16_t imm_word();
 
   void execute();
 };

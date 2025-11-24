@@ -10,6 +10,12 @@ uint8_t CPU::imm_byte() {
   return value;
 }
 
+uint16_t CPU::imm_word() {
+  const uint16_t value = memory.get_word(regFile.pc);
+  regFile.pc += 2;
+  return value;
+}
+
 void CPU::execute() {
   const uint8_t byte0 = imm_byte();
   switch (byte0) {
