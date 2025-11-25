@@ -145,6 +145,8 @@ void CPU::alu_ret() {
   regFile.pc = addr;
 }
 
+void CPU::alu_jp(uint16_t addr) { regFile.pc = addr; }
+
 void CPU::execute() {
   const uint8_t byte0 = imm_byte();
   switch (byte0) {
@@ -1281,7 +1283,65 @@ void CPU::execute() {
     break;
   }
 
-    // todo: implement IME flag and RETI instruction
+  // todo: implement IME flag and RETI instruction
+
+  // JP cond, imm16
+  case 0xC2: {
+    const uint16_t addr = imm_word();
+    if (!regFile.get_flag(Flag::Z)) {
+      alu_jp(addr);
+      std::println("JP NZ, 0x{:04X}", addr);
+    } else {
+      std::println("JP NZ, 0x{:04X} (not taken)", addr);
+    }
+    break;
+  }
+  case 0xD2: {
+    const uint16_t addr = imm_word();
+    if (!regFile.get_flag(Flag::C)) {
+      alu_jp(addr);
+      std::println("JP NC, 0x{:04X}", addr);
+    } else {
+      std::println("JP NC, 0x{:04X} (not taken)", addr);
+    }
+    break;
+  }
+  case 0xCA: {
+    const uint16_t addr = imm_word();
+    if (regFile.get_flag(Flag::Z)) {
+      alu_jp(addr);
+      std::println("JP Z, 0x{:04X}", addr);
+    } else {
+      std::println("JP Z, 0x{:04X} (not taken)", addr);
+    }
+    break;
+  }
+  case 0xDA: {
+    const uint16_t addr = imm_word();
+    if (regFile.get_flag(Flag::C)) {
+      alu_jp(addr);
+      std::println("JP C, 0x{:04X}", addr);
+    } else {
+      std::println("JP C, 0x{:04X} (not taken)", addr);
+    }
+    break;
+  }
+
+  // JP imm16
+  case 0xC3: {
+    const uint16_t addr = imm_word();
+    alu_jp(addr);
+    std::println("JP 0x{:04X}", addr);
+    break;
+  }
+
+  // JP HL
+  case 0xE9: {
+    const uint16_t addr = regFile.get_hl();
+    alu_jp(addr);
+    std::println("JP HL");
+    break;
+  }
 
   default: {
     std::println(stderr,

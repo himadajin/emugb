@@ -27,6 +27,7 @@ public:
   uint8_t alu_or(uint8_t imm8);
   void alu_cp(uint8_t imm8);
   void alu_ret();
+  void alu_jp(uint16_t addr);
 
   void execute();
 };
