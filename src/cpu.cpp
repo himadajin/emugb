@@ -99,6 +99,16 @@ uint8_t CPU::alu_sbc(uint8_t imm8) {
   return static_cast<uint8_t>(result & 0xFF);
 }
 
+// AND A, r8
+uint8_t CPU::alu_and(uint8_t imm8) {
+  const uint8_t result = regFile.a & imm8;
+  regFile.set_flag(Flag::Z, result == 0);
+  regFile.set_flag(Flag::N, false);
+  regFile.set_flag(Flag::H, true);
+  regFile.set_flag(Flag::C, false);
+  return result;
+}
+
 void CPU::execute() {
   const uint8_t byte0 = imm_byte();
   switch (byte0) {
@@ -980,6 +990,50 @@ void CPU::execute() {
   case 0x9F: {
     regFile.a = alu_sbc(regFile.a);
     std::println("SBC A, A");
+    break;
+  }
+
+  // AND A, r8
+  case 0xA0: {
+    regFile.a = alu_and(regFile.b);
+    std::println("AND A, B");
+    break;
+  }
+  case 0xA1: {
+    regFile.a = alu_and(regFile.c);
+    std::println("AND A, C");
+    break;
+  }
+  case 0xA2: {
+    regFile.a = alu_and(regFile.d);
+    std::println("AND A, D");
+    break;
+  }
+  case 0xA3: {
+    regFile.a = alu_and(regFile.e);
+    std::println("AND A, E");
+    break;
+  }
+  case 0xA4: {
+    regFile.a = alu_and(regFile.h);
+    std::println("AND A, H");
+    break;
+  }
+  case 0xA5: {
+    regFile.a = alu_and(regFile.l);
+    std::println("AND A, L");
+    break;
+  }
+  case 0xA6: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    regFile.a = alu_and(value);
+    std::println("AND A, (HL)");
+    break;
+  }
+  case 0xA7: {
+    regFile.a = alu_and(regFile.a);
+    std::println("AND A, A");
     break;
   }
   default: {
