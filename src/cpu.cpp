@@ -16,6 +16,17 @@ uint16_t CPU::imm_word() {
   return value;
 }
 
+void CPU::alu_add_hl(uint16_t imm16) {
+  const uint32_t result =
+      static_cast<uint32_t>(regFile.get_hl()) + static_cast<uint32_t>(imm16);
+  // Flag::Z is not affected.
+  regFile.set_flag(Flag::N, false);
+  regFile.set_flag(Flag::H,
+                   (regFile.get_hl() & 0x0FFF) + (imm16 & 0x0FFF) > 0x0FFF);
+  regFile.set_flag(Flag::C, result > 0xFFFF);
+  regFile.set_hl(static_cast<uint16_t>(result & 0xFFFF));
+}
+
 uint8_t CPU::alu_inc(uint8_t imm8) {
   const uint8_t result = imm8 + 1;
   regFile.set_flag(Flag::Z, result == 0);
@@ -34,17 +45,6 @@ uint8_t CPU::alu_dec(uint8_t imm8) {
   return result;
 }
 
-void CPU::alu_add_hl(uint16_t imm16) {
-  const uint32_t result =
-      static_cast<uint32_t>(regFile.get_hl()) + static_cast<uint32_t>(imm16);
-  // Flag::Z is not affected.
-  regFile.set_flag(Flag::N, false);
-  regFile.set_flag(Flag::H,
-                   (regFile.get_hl() & 0x0FFF) + (imm16 & 0x0FFF) > 0x0FFF);
-  regFile.set_flag(Flag::C, result > 0xFFFF);
-  regFile.set_hl(static_cast<uint16_t>(result & 0xFFFF));
-}
-
 // JR: Jump Relative
 void CPU::alu_jr(uint8_t imm8) {
   const int32_t offset = static_cast<int8_t>(imm8);
@@ -55,9 +55,10 @@ void CPU::execute() {
   const uint8_t byte0 = imm_byte();
   switch (byte0) {
   // NOP
-  case 0x00:
+  case 0x00: {
     std::println("NOP");
     break;
+  }
 
   // LD r16, imm16
   case 0x01: {
@@ -757,10 +758,11 @@ void CPU::execute() {
     std::println("LD A, A");
     break;
   }
-  default:
+  default: {
     std::println(stderr,
                  "Error: Unknown opcode found (PC: 0x{:04X} OPCODE: 0x{:02X})",
                  regFile.pc - 1, byte0);
     break;
+  }
   }
 }
