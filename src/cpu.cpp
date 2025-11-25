@@ -119,6 +119,16 @@ uint8_t CPU::alu_xor(uint8_t imm8) {
   return result;
 }
 
+// OR A, r8
+uint8_t CPU::alu_or(uint8_t imm8) {
+  const uint8_t result = regFile.a | imm8;
+  regFile.set_flag(Flag::Z, result == 0);
+  regFile.set_flag(Flag::N, false);
+  regFile.set_flag(Flag::H, false);
+  regFile.set_flag(Flag::C, false);
+  return result;
+}
+
 void CPU::execute() {
   const uint8_t byte0 = imm_byte();
   switch (byte0) {
@@ -1087,6 +1097,50 @@ void CPU::execute() {
   case 0xAF: {
     regFile.a = alu_xor(regFile.a);
     std::println("XOR A, A");
+    break;
+  }
+
+  // OR A, r8
+  case 0xB0: {
+    regFile.a = alu_or(regFile.b);
+    std::println("OR A, B");
+    break;
+  }
+  case 0xB1: {
+    regFile.a = alu_or(regFile.c);
+    std::println("OR A, C");
+    break;
+  }
+  case 0xB2: {
+    regFile.a = alu_or(regFile.d);
+    std::println("OR A, D");
+    break;
+  }
+  case 0xB3: {
+    regFile.a = alu_or(regFile.e);
+    std::println("OR A, E");
+    break;
+  }
+  case 0xB4: {
+    regFile.a = alu_or(regFile.h);
+    std::println("OR A, H");
+    break;
+  }
+  case 0xB5: {
+    regFile.a = alu_or(regFile.l);
+    std::println("OR A, L");
+    break;
+  }
+  case 0xB6: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    regFile.a = alu_or(value);
+    std::println("OR A, (HL)");
+    break;
+  }
+  case 0xB7: {
+    regFile.a = alu_or(regFile.a);
+    std::println("OR A, A");
     break;
   }
   default: {
