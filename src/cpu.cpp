@@ -109,6 +109,16 @@ uint8_t CPU::alu_and(uint8_t imm8) {
   return result;
 }
 
+// XOR A, r8
+uint8_t CPU::alu_xor(uint8_t imm8) {
+  const uint8_t result = regFile.a ^ imm8;
+  regFile.set_flag(Flag::Z, result == 0);
+  regFile.set_flag(Flag::N, false);
+  regFile.set_flag(Flag::H, false);
+  regFile.set_flag(Flag::C, false);
+  return result;
+}
+
 void CPU::execute() {
   const uint8_t byte0 = imm_byte();
   switch (byte0) {
@@ -1034,6 +1044,49 @@ void CPU::execute() {
   case 0xA7: {
     regFile.a = alu_and(regFile.a);
     std::println("AND A, A");
+    break;
+  }
+
+  case 0xA8: {
+    regFile.a = alu_xor(regFile.b);
+    std::println("XOR A, B");
+    break;
+  }
+  case 0xA9: {
+    regFile.a = alu_xor(regFile.c);
+    std::println("XOR A, C");
+    break;
+  }
+  case 0xAA: {
+    regFile.a = alu_xor(regFile.d);
+    std::println("XOR A, D");
+    break;
+  }
+  case 0xAB: {
+    regFile.a = alu_xor(regFile.e);;
+    std::println("XOR A, E");
+    break;
+  }
+  case 0xAC: {
+    regFile.a = alu_xor(regFile.h);
+    std::println("XOR A, H");
+    break;
+  }
+  case 0xAD: {
+    regFile.a = alu_xor(regFile.l);
+    std::println("XOR A, L");
+    break;
+  }
+  case 0xAE: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    regFile.a = alu_xor(value);
+    std::println("XOR A, (HL)");
+    break;
+  }
+  case 0xAF: {
+    regFile.a = alu_xor(regFile.a);
+    std::println("XOR A, A");
     break;
   }
   default: {
