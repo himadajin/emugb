@@ -129,6 +129,16 @@ uint8_t CPU::alu_or(uint8_t imm8) {
   return result;
 }
 
+// CP A, r8
+void CPU::alu_cp(uint8_t imm8) {
+  const uint16_t result =
+      static_cast<uint16_t>(regFile.a) - static_cast<uint16_t>(imm8);
+  regFile.set_flag(Flag::Z, (result & 0xFF) == 0);
+  regFile.set_flag(Flag::N, true);
+  regFile.set_flag(Flag::H, (regFile.a & 0x0F) < (imm8 & 0x0F));
+  regFile.set_flag(Flag::C, result > 0xFF);
+}
+
 void CPU::execute() {
   const uint8_t byte0 = imm_byte();
   switch (byte0) {
@@ -1141,6 +1151,50 @@ void CPU::execute() {
   case 0xB7: {
     regFile.a = alu_or(regFile.a);
     std::println("OR A, A");
+    break;
+  }
+
+  // CP A, r8
+  case 0xB8: {
+    alu_cp(regFile.b);
+    std::println("CP A, B");
+    break;
+  }
+  case 0xB9: {
+    alu_cp(regFile.c);
+    std::println("CP A, C");
+    break;
+  }
+  case 0xBA: {
+    alu_cp(regFile.d);
+    std::println("CP A, D");
+    break;
+  }
+  case 0xBB: {
+    alu_cp(regFile.e);
+    std::println("CP A, E");
+    break;
+  }
+  case 0xBC: {
+    alu_cp(regFile.h);
+    std::println("CP A, H");
+    break;
+  }
+  case 0xBD: {
+    alu_cp(regFile.l);
+    std::println("CP A, L");
+    break;
+  }
+  case 0xBE: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    alu_cp(value);
+    std::println("CP A, (HL)");
+    break;
+  }
+  case 0xBF: {
+    alu_cp(regFile.a);
+    std::println("CP A, A");
     break;
   }
   default: {
