@@ -1073,7 +1073,7 @@ void CPU::execute() {
     break;
   }
   case 0xAB: {
-    regFile.a = alu_xor(regFile.e);;
+    regFile.a = alu_xor(regFile.e);
     std::println("XOR A, E");
     break;
   }
