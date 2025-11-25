@@ -87,6 +87,18 @@ uint8_t CPU::alu_sub(uint8_t imm8) {
   return static_cast<uint8_t>(result & 0xFF);
 }
 
+// SBC A, r8
+uint8_t CPU::alu_sbc(uint8_t imm8) {
+  const uint16_t carry = regFile.get_flag(Flag::C) ? 1 : 0;
+  const uint16_t result =
+      static_cast<uint16_t>(regFile.a) - static_cast<uint16_t>(imm8) - carry;
+  regFile.set_flag(Flag::Z, (result & 0xFF) == 0);
+  regFile.set_flag(Flag::N, true);
+  regFile.set_flag(Flag::H, (regFile.a & 0x0F) < ((imm8 & 0x0F) + carry));
+  regFile.set_flag(Flag::C, result > 0xFF);
+  return static_cast<uint8_t>(result & 0xFF);
+}
+
 void CPU::execute() {
   const uint8_t byte0 = imm_byte();
   switch (byte0) {
@@ -924,6 +936,50 @@ void CPU::execute() {
   case 0x97: {
     regFile.a = alu_sub(regFile.a);
     std::println("SUB A, A");
+    break;
+  }
+
+  // SBC A, r8
+  case 0x98: {
+    regFile.a = alu_sbc(regFile.b);
+    std::println("SBC A, B");
+    break;
+  }
+  case 0x99: {
+    regFile.a = alu_sbc(regFile.c);
+    std::println("SBC A, C");
+    break;
+  }
+  case 0x9A: {
+    regFile.a = alu_sbc(regFile.d);
+    std::println("SBC A, D");
+    break;
+  }
+  case 0x9B: {
+    regFile.a = alu_sbc(regFile.e);
+    std::println("SBC A, E");
+    break;
+  }
+  case 0x9C: {
+    regFile.a = alu_sbc(regFile.h);
+    std::println("SBC A, H");
+    break;
+  }
+  case 0x9D: {
+    regFile.a = alu_sbc(regFile.l);
+    std::println("SBC A, L");
+    break;
+  }
+  case 0x9E: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    regFile.a = alu_sbc(value);
+    std::println("SBC A, (HL)");
+    break;
+  }
+  case 0x9F: {
+    regFile.a = alu_sbc(regFile.a);
+    std::println("SBC A, A");
     break;
   }
   default: {
