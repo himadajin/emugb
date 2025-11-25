@@ -18,6 +18,14 @@ public:
   uint8_t alu_inc(uint8_t imm8);
   uint8_t alu_dec(uint8_t imm8);
   void alu_jr(uint8_t imm8);
+  uint8_t alu_add(uint8_t imm8);
+  uint8_t alu_adc(uint8_t imm8);
+  uint8_t alu_sub(uint8_t imm8);
+  uint8_t alu_sbc(uint8_t imm8);
+  uint8_t alu_and(uint8_t imm8);
+  uint8_t alu_xor(uint8_t imm8);
+  uint8_t alu_or(uint8_t imm8);
+  void alu_cp(uint8_t imm8);
 
   void execute();
 };

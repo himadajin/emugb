@@ -51,6 +51,94 @@ void CPU::alu_jr(uint8_t imm8) {
   regFile.pc = static_cast<uint16_t>(static_cast<int32_t>(regFile.pc) + offset);
 }
 
+// ADD A, r8
+uint8_t CPU::alu_add(uint8_t imm8) {
+  const uint16_t result =
+      static_cast<uint16_t>(regFile.a) + static_cast<uint16_t>(imm8);
+  regFile.set_flag(Flag::Z, (result & 0xFF) == 0);
+  regFile.set_flag(Flag::N, false);
+  regFile.set_flag(Flag::H, ((regFile.a & 0x0F) + (imm8 & 0x0F)) > 0x0F);
+  regFile.set_flag(Flag::C, result > 0xFF);
+  return static_cast<uint8_t>(result);
+}
+
+// ADC A, r8
+uint8_t CPU::alu_adc(uint8_t imm8) {
+  const uint16_t carry = regFile.get_flag(Flag::C) ? 1 : 0;
+  const uint16_t result = static_cast<uint16_t>(regFile.a) +
+                          static_cast<uint16_t>(imm8) +
+                          static_cast<uint16_t>(carry);
+  regFile.set_flag(Flag::Z, (result & 0xFF) == 0);
+  regFile.set_flag(Flag::N, false);
+  regFile.set_flag(Flag::H,
+                   ((regFile.a & 0x0F) + (imm8 & 0x0F) + carry) > 0x0F);
+  regFile.set_flag(Flag::C, result > 0xFF);
+  return static_cast<uint8_t>(result & 0xFF);
+}
+
+// SUB A, r8
+uint8_t CPU::alu_sub(uint8_t imm8) {
+  const uint16_t result =
+      static_cast<uint16_t>(regFile.a) - static_cast<uint16_t>(imm8);
+  regFile.set_flag(Flag::Z, (result & 0xFF) == 0);
+  regFile.set_flag(Flag::N, true);
+  regFile.set_flag(Flag::H, (regFile.a & 0x0F) < (imm8 & 0x0F));
+  regFile.set_flag(Flag::C, result > 0xFF);
+  return static_cast<uint8_t>(result & 0xFF);
+}
+
+// SBC A, r8
+uint8_t CPU::alu_sbc(uint8_t imm8) {
+  const uint16_t carry = regFile.get_flag(Flag::C) ? 1 : 0;
+  const uint16_t result =
+      static_cast<uint16_t>(regFile.a) - static_cast<uint16_t>(imm8) - carry;
+  regFile.set_flag(Flag::Z, (result & 0xFF) == 0);
+  regFile.set_flag(Flag::N, true);
+  regFile.set_flag(Flag::H, (regFile.a & 0x0F) < ((imm8 & 0x0F) + carry));
+  regFile.set_flag(Flag::C, result > 0xFF);
+  return static_cast<uint8_t>(result & 0xFF);
+}
+
+// AND A, r8
+uint8_t CPU::alu_and(uint8_t imm8) {
+  const uint8_t result = regFile.a & imm8;
+  regFile.set_flag(Flag::Z, result == 0);
+  regFile.set_flag(Flag::N, false);
+  regFile.set_flag(Flag::H, true);
+  regFile.set_flag(Flag::C, false);
+  return result;
+}
+
+// XOR A, r8
+uint8_t CPU::alu_xor(uint8_t imm8) {
+  const uint8_t result = regFile.a ^ imm8;
+  regFile.set_flag(Flag::Z, result == 0);
+  regFile.set_flag(Flag::N, false);
+  regFile.set_flag(Flag::H, false);
+  regFile.set_flag(Flag::C, false);
+  return result;
+}
+
+// OR A, r8
+uint8_t CPU::alu_or(uint8_t imm8) {
+  const uint8_t result = regFile.a | imm8;
+  regFile.set_flag(Flag::Z, result == 0);
+  regFile.set_flag(Flag::N, false);
+  regFile.set_flag(Flag::H, false);
+  regFile.set_flag(Flag::C, false);
+  return result;
+}
+
+// CP A, r8
+void CPU::alu_cp(uint8_t imm8) {
+  const uint16_t result =
+      static_cast<uint16_t>(regFile.a) - static_cast<uint16_t>(imm8);
+  regFile.set_flag(Flag::Z, (result & 0xFF) == 0);
+  regFile.set_flag(Flag::N, true);
+  regFile.set_flag(Flag::H, (regFile.a & 0x0F) < (imm8 & 0x0F));
+  regFile.set_flag(Flag::C, result > 0xFF);
+}
+
 void CPU::execute() {
   const uint8_t byte0 = imm_byte();
   switch (byte0) {
@@ -756,6 +844,357 @@ void CPU::execute() {
   case 0x7F: {
     regFile.a = regFile.a;
     std::println("LD A, A");
+    break;
+  }
+
+  // ADD A, r8
+  case 0x80: {
+    regFile.a = alu_add(regFile.b);
+    std::println("ADD A, B");
+    break;
+  }
+  case 0x81: {
+    regFile.a = alu_add(regFile.c);
+    std::println("ADD A, C");
+    break;
+  }
+  case 0x82: {
+    regFile.a = alu_add(regFile.d);
+    std::println("ADD A, D");
+    break;
+  }
+  case 0x83: {
+    regFile.a = alu_add(regFile.e);
+    std::println("ADD A, E");
+    break;
+  }
+  case 0x84: {
+    regFile.a = alu_add(regFile.h);
+    std::println("ADD A, H");
+    break;
+  }
+  case 0x85: {
+    regFile.a = alu_add(regFile.l);
+    std::println("ADD A, L");
+    break;
+  }
+  case 0x86: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    regFile.a = alu_add(value);
+    std::println("ADD A, (HL)");
+    break;
+  }
+  case 0x87: {
+    regFile.a = alu_add(regFile.a);
+    std::println("ADD A, A");
+    break;
+  }
+
+  // ADC A, r8
+  case 0x88: {
+    regFile.a = alu_adc(regFile.b);
+    std::println("ADC A, B");
+    break;
+  }
+  case 0x89: {
+    regFile.a = alu_adc(regFile.c);
+    std::println("ADC A, C");
+    break;
+  }
+  case 0x8A: {
+    regFile.a = alu_adc(regFile.d);
+    std::println("ADC A, D");
+    break;
+  }
+  case 0x8B: {
+    regFile.a = alu_adc(regFile.e);
+    std::println("ADC A, E");
+    break;
+  }
+  case 0x8C: {
+    regFile.a = alu_adc(regFile.h);
+    std::println("ADC A, H");
+    break;
+  }
+  case 0x8D: {
+    regFile.a = alu_adc(regFile.l);
+    std::println("ADC A, L");
+    break;
+  }
+  case 0x8E: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    regFile.a = alu_adc(value);
+    std::println("ADC A, (HL)");
+    break;
+  }
+  case 0x8F: {
+    regFile.a = alu_adc(regFile.a);
+    std::println("ADC A, A");
+    break;
+  }
+
+  // SUB A, r8
+  case 0x90: {
+    regFile.a = alu_sub(regFile.b);
+    std::println("SUB A, B");
+    break;
+  }
+  case 0x91: {
+    regFile.a = alu_sub(regFile.c);
+    std::println("SUB A, C");
+    break;
+  }
+  case 0x92: {
+    regFile.a = alu_sub(regFile.d);
+    std::println("SUB A, D");
+    break;
+  }
+  case 0x93: {
+    regFile.a = alu_sub(regFile.e);
+    std::println("SUB A, E");
+    break;
+  }
+  case 0x94: {
+    regFile.a = alu_sub(regFile.h);
+    std::println("SUB A, H");
+    break;
+  }
+  case 0x95: {
+    regFile.a = alu_sub(regFile.l);
+    std::println("SUB A, L");
+    break;
+  }
+  case 0x96: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    regFile.a = alu_sub(value);
+    std::println("SUB A, (HL)");
+    break;
+  }
+  case 0x97: {
+    regFile.a = alu_sub(regFile.a);
+    std::println("SUB A, A");
+    break;
+  }
+
+  // SBC A, r8
+  case 0x98: {
+    regFile.a = alu_sbc(regFile.b);
+    std::println("SBC A, B");
+    break;
+  }
+  case 0x99: {
+    regFile.a = alu_sbc(regFile.c);
+    std::println("SBC A, C");
+    break;
+  }
+  case 0x9A: {
+    regFile.a = alu_sbc(regFile.d);
+    std::println("SBC A, D");
+    break;
+  }
+  case 0x9B: {
+    regFile.a = alu_sbc(regFile.e);
+    std::println("SBC A, E");
+    break;
+  }
+  case 0x9C: {
+    regFile.a = alu_sbc(regFile.h);
+    std::println("SBC A, H");
+    break;
+  }
+  case 0x9D: {
+    regFile.a = alu_sbc(regFile.l);
+    std::println("SBC A, L");
+    break;
+  }
+  case 0x9E: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    regFile.a = alu_sbc(value);
+    std::println("SBC A, (HL)");
+    break;
+  }
+  case 0x9F: {
+    regFile.a = alu_sbc(regFile.a);
+    std::println("SBC A, A");
+    break;
+  }
+
+  // AND A, r8
+  case 0xA0: {
+    regFile.a = alu_and(regFile.b);
+    std::println("AND A, B");
+    break;
+  }
+  case 0xA1: {
+    regFile.a = alu_and(regFile.c);
+    std::println("AND A, C");
+    break;
+  }
+  case 0xA2: {
+    regFile.a = alu_and(regFile.d);
+    std::println("AND A, D");
+    break;
+  }
+  case 0xA3: {
+    regFile.a = alu_and(regFile.e);
+    std::println("AND A, E");
+    break;
+  }
+  case 0xA4: {
+    regFile.a = alu_and(regFile.h);
+    std::println("AND A, H");
+    break;
+  }
+  case 0xA5: {
+    regFile.a = alu_and(regFile.l);
+    std::println("AND A, L");
+    break;
+  }
+  case 0xA6: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    regFile.a = alu_and(value);
+    std::println("AND A, (HL)");
+    break;
+  }
+  case 0xA7: {
+    regFile.a = alu_and(regFile.a);
+    std::println("AND A, A");
+    break;
+  }
+
+  case 0xA8: {
+    regFile.a = alu_xor(regFile.b);
+    std::println("XOR A, B");
+    break;
+  }
+  case 0xA9: {
+    regFile.a = alu_xor(regFile.c);
+    std::println("XOR A, C");
+    break;
+  }
+  case 0xAA: {
+    regFile.a = alu_xor(regFile.d);
+    std::println("XOR A, D");
+    break;
+  }
+  case 0xAB: {
+    regFile.a = alu_xor(regFile.e);
+    std::println("XOR A, E");
+    break;
+  }
+  case 0xAC: {
+    regFile.a = alu_xor(regFile.h);
+    std::println("XOR A, H");
+    break;
+  }
+  case 0xAD: {
+    regFile.a = alu_xor(regFile.l);
+    std::println("XOR A, L");
+    break;
+  }
+  case 0xAE: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    regFile.a = alu_xor(value);
+    std::println("XOR A, (HL)");
+    break;
+  }
+  case 0xAF: {
+    regFile.a = alu_xor(regFile.a);
+    std::println("XOR A, A");
+    break;
+  }
+
+  // OR A, r8
+  case 0xB0: {
+    regFile.a = alu_or(regFile.b);
+    std::println("OR A, B");
+    break;
+  }
+  case 0xB1: {
+    regFile.a = alu_or(regFile.c);
+    std::println("OR A, C");
+    break;
+  }
+  case 0xB2: {
+    regFile.a = alu_or(regFile.d);
+    std::println("OR A, D");
+    break;
+  }
+  case 0xB3: {
+    regFile.a = alu_or(regFile.e);
+    std::println("OR A, E");
+    break;
+  }
+  case 0xB4: {
+    regFile.a = alu_or(regFile.h);
+    std::println("OR A, H");
+    break;
+  }
+  case 0xB5: {
+    regFile.a = alu_or(regFile.l);
+    std::println("OR A, L");
+    break;
+  }
+  case 0xB6: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    regFile.a = alu_or(value);
+    std::println("OR A, (HL)");
+    break;
+  }
+  case 0xB7: {
+    regFile.a = alu_or(regFile.a);
+    std::println("OR A, A");
+    break;
+  }
+
+  // CP A, r8
+  case 0xB8: {
+    alu_cp(regFile.b);
+    std::println("CP A, B");
+    break;
+  }
+  case 0xB9: {
+    alu_cp(regFile.c);
+    std::println("CP A, C");
+    break;
+  }
+  case 0xBA: {
+    alu_cp(regFile.d);
+    std::println("CP A, D");
+    break;
+  }
+  case 0xBB: {
+    alu_cp(regFile.e);
+    std::println("CP A, E");
+    break;
+  }
+  case 0xBC: {
+    alu_cp(regFile.h);
+    std::println("CP A, H");
+    break;
+  }
+  case 0xBD: {
+    alu_cp(regFile.l);
+    std::println("CP A, L");
+    break;
+  }
+  case 0xBE: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    alu_cp(value);
+    std::println("CP A, (HL)");
+    break;
+  }
+  case 0xBF: {
+    alu_cp(regFile.a);
+    std::println("CP A, A");
     break;
   }
   default: {
