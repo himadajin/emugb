@@ -18,6 +18,7 @@ public:
   uint8_t alu_inc(uint8_t imm8);
   uint8_t alu_dec(uint8_t imm8);
   void alu_jr(uint8_t imm8);
+  uint8_t alu_add(uint8_t imm8);
 
   void execute();
 };

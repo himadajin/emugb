@@ -51,6 +51,17 @@ void CPU::alu_jr(uint8_t imm8) {
   regFile.pc = static_cast<uint16_t>(static_cast<int32_t>(regFile.pc) + offset);
 }
 
+// ADD A, r8
+uint8_t CPU::alu_add(uint8_t imm8) {
+  const uint16_t result =
+      static_cast<uint16_t>(regFile.a) + static_cast<uint16_t>(imm8);
+  regFile.set_flag(Flag::Z, (result & 0xFF) == 0);
+  regFile.set_flag(Flag::N, false);
+  regFile.set_flag(Flag::H, ((regFile.a & 0x0F) + (imm8 & 0x0F)) > 0x0F);
+  regFile.set_flag(Flag::C, result > 0xFF);
+  return static_cast<uint8_t>(result);
+}
+
 void CPU::execute() {
   const uint8_t byte0 = imm_byte();
   switch (byte0) {
@@ -756,6 +767,50 @@ void CPU::execute() {
   case 0x7F: {
     regFile.a = regFile.a;
     std::println("LD A, A");
+    break;
+  }
+
+  // ADD A, r8
+  case 0x80: {
+    regFile.a = alu_add(regFile.b);
+    std::println("ADD A, B");
+    break;
+  }
+  case 0x81: {
+    regFile.a = alu_add(regFile.c);
+    std::println("ADD A, C");
+    break;
+  }
+  case 0x82: {
+    regFile.a = alu_add(regFile.d);
+    std::println("ADD A, D");
+    break;
+  }
+  case 0x83: {
+    regFile.a = alu_add(regFile.e);
+    std::println("ADD A, E");
+    break;
+  }
+  case 0x84: {
+    regFile.a = alu_add(regFile.h);
+    std::println("ADD A, H");
+    break;
+  }
+  case 0x85: {
+    regFile.a = alu_add(regFile.l);
+    std::println("ADD A, L");
+    break;
+  }
+  case 0x86: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    regFile.a = alu_add(value);
+    std::println("ADD A, (HL)");
+    break;
+  }
+  case 0x87: {
+    regFile.a = alu_add(regFile.a);
+    std::println("ADD A, A");
     break;
   }
   default: {
