@@ -16,6 +16,17 @@ uint16_t CPU::imm_word() {
   return value;
 }
 
+void CPU::alu_add_hl(uint16_t imm16) {
+  const uint32_t result =
+      static_cast<uint32_t>(regFile.get_hl()) + static_cast<uint32_t>(imm16);
+  // Flag::Z is not affected.
+  regFile.set_flag(Flag::N, false);
+  regFile.set_flag(Flag::H,
+                   (regFile.get_hl() & 0x0FFF) + (imm16 & 0x0FFF) > 0x0FFF);
+  regFile.set_flag(Flag::C, result > 0xFFFF);
+  regFile.set_hl(static_cast<uint16_t>(result & 0xFFFF));
+}
+
 uint8_t CPU::alu_inc(uint8_t imm8) {
   const uint8_t result = imm8 + 1;
   regFile.set_flag(Flag::Z, result == 0);
@@ -32,17 +43,6 @@ uint8_t CPU::alu_dec(uint8_t imm8) {
   regFile.set_flag(Flag::N, true);
   // Flag::C is not affected.
   return result;
-}
-
-void CPU::alu_add_hl(uint16_t imm16) {
-  const uint32_t result =
-      static_cast<uint32_t>(regFile.get_hl()) + static_cast<uint32_t>(imm16);
-  // Flag::Z is not affected.
-  regFile.set_flag(Flag::N, false);
-  regFile.set_flag(Flag::H,
-                   (regFile.get_hl() & 0x0FFF) + (imm16 & 0x0FFF) > 0x0FFF);
-  regFile.set_flag(Flag::C, result > 0xFFFF);
-  regFile.set_hl(static_cast<uint16_t>(result & 0xFFFF));
 }
 
 // JR: Jump Relative
