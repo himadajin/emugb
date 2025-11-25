@@ -1197,6 +1197,39 @@ void CPU::execute() {
     std::println("CP A, A");
     break;
   }
+
+  // ADD A, imm8
+  case 0xC6: {
+    const uint8_t imm8 = imm_byte();
+    regFile.a = alu_add(imm8);
+    std::println("ADD A, 0x{:02X}", imm8);
+    break;
+  }
+
+  // SUB A, imm8
+  case 0xD6: {
+    const uint8_t imm8 = imm_byte();
+    regFile.a = alu_sub(imm8);
+    std::println("SUB A, 0x{:02X}", imm8);
+    break;
+  }
+
+  // AND A, imm8
+  case 0xE6: {
+    const uint8_t imm8 = imm_byte();
+    regFile.a = alu_and(imm8);
+    std::println("AND A, 0x{:02X}", imm8);
+    break;
+  }
+
+  // OR A, imm8
+  case 0xF6: {
+    const uint8_t imm8 = imm_byte();
+    regFile.a = alu_or(imm8);
+    std::println("OR A, 0x{:02X}", imm8);
+    break;
+  }
+
   default: {
     std::println(stderr,
                  "Error: Unknown opcode found (PC: 0x{:04X} OPCODE: 0x{:02X})",
