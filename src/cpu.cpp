@@ -139,6 +139,12 @@ void CPU::alu_cp(uint8_t imm8) {
   regFile.set_flag(Flag::C, result > 0xFF);
 }
 
+void CPU::alu_ret() {
+  const uint16_t addr = memory.get_word(regFile.sp);
+  regFile.sp += 2;
+  regFile.pc = addr;
+}
+
 void CPU::execute() {
   const uint8_t byte0 = imm_byte();
   switch (byte0) {
@@ -1229,6 +1235,53 @@ void CPU::execute() {
     std::println("OR A, 0x{:02X}", imm8);
     break;
   }
+
+  // RET cond
+  case 0xC0: {
+    if (!regFile.get_flag(Flag::Z)) {
+      alu_ret();
+      std::println("RET NZ");
+    } else {
+      std::println("RET NZ (not taken)");
+    }
+    break;
+  }
+  case 0xD0: {
+    if (!regFile.get_flag(Flag::C)) {
+      alu_ret();
+      std::println("RET NC");
+    } else {
+      std::println("RET NC (not taken)");
+    }
+    break;
+  }
+  case 0xC8: {
+    if (regFile.get_flag(Flag::Z)) {
+      alu_ret();
+      std::println("RET Z");
+    } else {
+      std::println("RET Z (not taken)");
+    }
+    break;
+  }
+  case 0xD8: {
+    if (regFile.get_flag(Flag::C)) {
+      alu_ret();
+      std::println("RET C");
+    } else {
+      std::println("RET C (not taken)");
+    }
+    break;
+  }
+
+  // RET
+  case 0xC9: {
+    alu_ret();
+    std::println("RET");
+    break;
+  }
+
+    // todo: implement IME flag and RETI instruction
 
   default: {
     std::println(stderr,

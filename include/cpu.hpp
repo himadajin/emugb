@@ -26,6 +26,7 @@ public:
   uint8_t alu_xor(uint8_t imm8);
   uint8_t alu_or(uint8_t imm8);
   void alu_cp(uint8_t imm8);
+  void alu_ret();
 
   void execute();
 };
