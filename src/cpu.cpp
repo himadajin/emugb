@@ -76,6 +76,17 @@ uint8_t CPU::alu_adc(uint8_t imm8) {
   return static_cast<uint8_t>(result & 0xFF);
 }
 
+// SUB A, r8
+uint8_t CPU::alu_sub(uint8_t imm8) {
+  const uint16_t result =
+      static_cast<uint16_t>(regFile.a) - static_cast<uint16_t>(imm8);
+  regFile.set_flag(Flag::Z, (result & 0xFF) == 0);
+  regFile.set_flag(Flag::N, true);
+  regFile.set_flag(Flag::H, (regFile.a & 0x0F) < (imm8 & 0x0F));
+  regFile.set_flag(Flag::C, result > 0xFF);
+  return static_cast<uint8_t>(result & 0xFF);
+}
+
 void CPU::execute() {
   const uint8_t byte0 = imm_byte();
   switch (byte0) {
@@ -869,6 +880,50 @@ void CPU::execute() {
   case 0x8F: {
     regFile.a = alu_adc(regFile.a);
     std::println("ADC A, A");
+    break;
+  }
+
+  // SUB A, r8
+  case 0x90: {
+    regFile.a = alu_sub(regFile.b);
+    std::println("SUB A, B");
+    break;
+  }
+  case 0x91: {
+    regFile.a = alu_sub(regFile.c);
+    std::println("SUB A, C");
+    break;
+  }
+  case 0x92: {
+    regFile.a = alu_sub(regFile.d);
+    std::println("SUB A, D");
+    break;
+  }
+  case 0x93: {
+    regFile.a = alu_sub(regFile.e);
+    std::println("SUB A, E");
+    break;
+  }
+  case 0x94: {
+    regFile.a = alu_sub(regFile.h);
+    std::println("SUB A, H");
+    break;
+  }
+  case 0x95: {
+    regFile.a = alu_sub(regFile.l);
+    std::println("SUB A, L");
+    break;
+  }
+  case 0x96: {
+    const uint16_t addr = regFile.get_hl();
+    const uint8_t value = memory.get_byte(addr);
+    regFile.a = alu_sub(value);
+    std::println("SUB A, (HL)");
+    break;
+  }
+  case 0x97: {
+    regFile.a = alu_sub(regFile.a);
+    std::println("SUB A, A");
     break;
   }
   default: {
