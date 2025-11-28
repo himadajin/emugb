@@ -1343,6 +1343,24 @@ void CPU::execute() {
     break;
   }
 
+  // TODO: implement CALL cond, imm16
+  // TODO: implement CALL imm16
+  // TODO: implement RST tgt3
+  // TODO: implement POP r16stk
+  // TODO: implement PUSH r16stk
+  // TODO: implement prefix CB opcodes
+  // TODO: implement LDH [C], A
+  // TODO: implement LDH [imm8], A
+  // TODO: implement LD [imm16], A
+  // TODO: implement LDH A, [C]
+  // TODO: implement LDH A, [imm8]
+  // TODO: implement LD A, [imm16]
+  // TODO: implement SP, imm8
+  // TODO: implement LD HL, SP+imm8
+  // TODO: implement LD SP, HL
+  // TODO: implement DI
+  // TODO: implement EI
+
   default: {
     std::println(stderr,
                  "Error: Unknown opcode found (PC: 0x{:04X} OPCODE: 0x{:02X})",
