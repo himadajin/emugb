@@ -459,14 +459,14 @@ void CPU::execute() {
     break;
   }
 
-  // todo: implement RLCA
-  // todo: implement RRCA
-  // todo: implement RLA
-  // todo: implement RRA
-  // todo: implement DAA
-  // todo: implement CPL
-  // todo: implement SCF
-  // todo: implement CCF
+  // TODO: implement RLCA
+  // TODO: implement RRCA
+  // TODO: implement RLA
+  // TODO: implement RRA
+  // TODO: implement DAA
+  // TODO: implement CPL
+  // TODO: implement SCF
+  // TODO: implement CCF
 
   // JR imm8
   case 0x18: {
@@ -1283,7 +1283,7 @@ void CPU::execute() {
     break;
   }
 
-  // todo: implement IME flag and RETI instruction
+  // TODO: implement IME flag and RETI instruction
 
   // JP cond, imm16
   case 0xC2: {
